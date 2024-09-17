@@ -1,5 +1,6 @@
 import os
 import typer
+import sys
 from dotenv import load_dotenv
 from typing import Optional, List
 from googleapiclient.errors import HttpError
@@ -12,9 +13,11 @@ from .benchmark_gsheet import BenchmarkGsheet
 load_dotenv()
 
 benchmarker = typer.Typer()
-FULL_SET_NAME = "all_sets"
 
+
+FULL_SET_NAME = "all_sets"
 NLU_DATA_DIR = "../../data/"
+SCORE_THRESHOLD = 0.8
 
 
 @benchmarker.command()
@@ -103,7 +106,10 @@ def run(
             storage.save_results(result)
 
             score = result.get_match_rate()
-            typer.echo(f"Number of Tests: {score[0]}, Matchscore {score[3]}")
+            n_tests = score[0]
+            matchscore = score[3]
+
+            typer.echo(f"Number of Tests: {n_tests}, Matchscore {matchscore}")
             all_results.add_results(result.get_results())
 
         except Exception as e:
@@ -111,6 +117,39 @@ def run(
             typer.secho(e.__str__(), err=True)
 
     storage.save_results(all_results)
+    return (n_tests, matchscore)
+
+@benchmarker.command()
+def check(
+    threshold: Optional[float] = SCORE_THRESHOLD,
+    testset_names: Optional[List[str]] = typer.Argument(
+        None,
+        help="one or several testset names to create test report. Only the newest testrun will be loaded",
+    ),
+    run_id: Optional[str] = typer.Option(
+        default="nlu_update",
+        help="if run_id was used in benchmark execution, load results for run_id (only newest as well)",
+    ),
+    data_root: Optional[str] = typer.Option(
+        None, help="path to folder holding the test set data"
+    ),
+    ftype: Optional[str] = typer.Option(
+        default="csv", help="file type csv|json (atm only csv is implemented)"
+    ),
+    testtype: Optional[str] = "nlu_r",
+    zip_path: Optional[str] = typer.Option(
+        None, help="if zipping is wanted, you must pass the path to report-folder"
+    ),
+    ):
+
+    typer.echo(f"check if trained model reaches score > {threshold}")
+    n_tests, score = run(testset_names, ftype, data_root, run_id, testtype)
+    if score < threshold:
+        typer.secho(f"score {score} is below threshold", fg=typer.colors.RED)
+        sys.exit(1)
+    else:
+        typer.secho(f"score {score} is above threshold", fg=typer.colors.GREEN)
+        sys.exit(0)
 
 
 @benchmarker.command()
