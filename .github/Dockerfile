@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 
 # Install Rasa and any Python dependencies
 RUN pip install -r benchmark/requirements.txt
-RUN pip install rasa requests
+RUN pip install rasa
 
 # Define build-time arguments
 ARG model_path=models/
