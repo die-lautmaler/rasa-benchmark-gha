@@ -1,0 +1,13 @@
+python-dotenv
+pyyaml
+pandas
+typer
+google-cloud-dialogflow
+google-api-python-client
+gspread
+gspread-dataframe
+gspread-formatting
+oauth2client
+matplotlib
+seaborn
+numpy

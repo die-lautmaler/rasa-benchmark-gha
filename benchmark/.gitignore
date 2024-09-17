@@ -1,0 +1,6 @@
+.env
+data/*
+data_sales/*
+benchmark.egg-info/*
+results/*
+*/__pycache__/*

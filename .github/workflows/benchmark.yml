@@ -1,0 +1,62 @@
+# .github/workflows/benchmark_rasa.yml
+name: Benchmark Rasa Model
+
+on:
+  repository_dispatch:
+    types: [trigger-benchmark]
+  workflow_dispatch:
+    inputs:
+      target_repo_url:
+        description: 'The URL of the target repository'
+        required: true
+
+jobs:
+  benchmark-rasa:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the benchmark repository
+        uses: actions/checkout@v3
+
+      - name: Download Rasa model artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: rasa-model
+          path: models/
+      
+      # set Duckling URL to localhost for CI
+      - name: Set up Duckling URL
+        run: echo "DUCKLING_URL=http://localhost:8000" >> $GITHUB_ENV
+
+      - name: Set up Docker or install Rasa (optional, if you want to run locally)
+        run: |
+          docker pull rasa/rasa:latest-full
+          # OR if you want to run locally without Docker:
+          # pip install rasa
+
+      - name: Run Rasa model using Docker
+        run: |
+          echo "Starting Rasa server with trained model"
+          docker run -d -p 8005:8005 -v $(pwd)/models:/app/models rasa/rasa:latest-full run --enable-api --model models --cors "*"
+
+      - name: Wait for localhost:8005 to be ready
+        run: |
+          echo "Waiting for localhost:8005..."
+          for i in {1..15}; do
+            if curl --silent --fail localhost:8005/model/parse; then
+              echo "Service is up!"
+              break
+            else
+              echo "Service not ready yet. Retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+
+      - name: Benchmark Rasa model
+        run: |
+          pip install -r benchmark/requirements.txt
+          python benchmark/rasa_data_to_csv.py "data/nlu.yml" "data/csv/nlu.csv"
+          python -m benchmark.bin check
+
+      - name: Stop Rasa model
+        run: docker stop $(docker ps -q --filter ancestor=rasa/rasa:latest-full)
