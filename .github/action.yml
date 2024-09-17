@@ -1,0 +1,28 @@
+# action.yml
+name: 'Rasa NLU Benchmark'
+description: 'Runs a benchmark script on a given Rasa NLU model'
+inputs:
+  model_path:
+    description: 'Path to the Rasa NLU model'
+    required: true
+  duckling_url:
+    description: 'URL of the Duckling server'
+    required: true
+  test_data_path:
+    description: 'Path to the test data'
+    required: true
+  output_path:
+    description: 'Path to the output file'
+    required: true
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.model_path }}
+    - ${{ inputs.duckling_url }}
+    - ${{ inputs.test_data_path }}
+    - ${{ inputs.output_path }}
+
