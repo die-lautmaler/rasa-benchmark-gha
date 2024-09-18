@@ -11,7 +11,19 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean
 
 # Install Rasa and any Python dependencies
-RUN pip install -r benchmark/requirements.txt
+RUN pip install python-dotenv
+RUN pip install pyyaml
+RUN pip install pandas
+RUN pip install typer
+RUN pip install google-cloud-dialogflow
+RUN pip install google-api-python-client
+RUN pip install gspread
+RUN pip install gspread-dataframe
+RUN pip install gspread-formatting
+RUN pip install oauth2client
+RUN pip install matplotlib
+RUN pip install seaborn
+RUN pip install numpy
 RUN pip install rasa
 
 # Define build-time arguments
