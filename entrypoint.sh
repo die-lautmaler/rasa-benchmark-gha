@@ -16,7 +16,7 @@ sleep 500
 # Run the benchmark script
 echo "Running benchmark script"
 export PYTHONPATH=/action
-python -m benchmark.bin check
+python -m benchmark.bin check --threshold $THRESHOLD --nlu-data-dir $TEST_DATA_PATH
 
 # Capture the completion time
 COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")

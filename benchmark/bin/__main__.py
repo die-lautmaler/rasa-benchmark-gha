@@ -121,7 +121,6 @@ def run(
 
 @benchmarker.command()
 def check(
-    threshold: Optional[float] = SCORE_THRESHOLD,
     testset_names: Optional[List[str]] = typer.Argument(
         None,
         help="one or several testset names to create test report. Only the newest testrun will be loaded",
@@ -140,10 +139,17 @@ def check(
     zip_path: Optional[str] = typer.Option(
         None, help="if zipping is wanted, you must pass the path to report-folder"
     ),
+    nlu_data_dir: Optional[str] = typer.Option(
+        default="../../data/", help="path to folder holding the test set data"
+    ),
+    threshold: Optional[float] = typer.Option(
+        default=SCORE_THRESHOLD, help="threshold for score"
+    ),
     ):
 
     typer.echo(f"check if trained model reaches score > {threshold}")
-    n_tests, score = run(testset_names, ftype, data_root, run_id, testtype)
+    n_tests, score = run(testset_names, ftype, nlu_data_dir, run_id, testtype)
+    
     if score < threshold:
         typer.secho(f"score {score} is below threshold", fg=typer.colors.RED)
         sys.exit(1)

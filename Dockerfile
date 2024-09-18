@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
 
 # Install Rasa and other Python dependencies
 RUN python -m pip install rasa==3.6.20
+RUN python -m pip install spacy==3.7.0
+RUN pip install git+https://github.com/die-lautmaler/rasa_components.git
+RUN pip install de-pipeline-lautmaler --extra-index-url=https://oauth2accesstoken:$GAR_TOKEN@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
 
 # Copy the benchmark directory from the action repository
 COPY benchmark /action/benchmark

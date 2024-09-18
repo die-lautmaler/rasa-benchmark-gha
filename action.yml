@@ -10,9 +10,12 @@ inputs:
   test_data_path:
     description: 'Path to the test data'
     required: true
+  gar_token:
+    description: 'Token for the GAR repository'
+    required: true
   output_path:
     description: 'Path to the output file'
-    required: true
+    required: false
   rasa_port:
     description: 'Port for the Rasa server'
     required: false
@@ -29,3 +32,4 @@ runs:
     TEST_DATA_PATH: ${{ inputs.test_data_path }}
     OUTPUT_PATH: ${{ inputs.output_path }}
     RASA_PORT: ${{ inputs.rasa_port }}
+    GAR_TOKEN: ${{ inputs.gar_token }}
