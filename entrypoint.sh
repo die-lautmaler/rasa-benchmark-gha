@@ -14,8 +14,8 @@ rasa run --enable-api --model "$MODEL_PATH" --port "$RASA_PORT" &
 sleep 500
 
 # Run the benchmark script
-echo "Running benchmark script"
-export PYTHONPATH=/action
+echo "Running benchmark script" 
+python -m pip install -r requirements.txt
 python -m benchmark.bin check --threshold $THRESHOLD --nlu-data-dir $TEST_DATA_PATH
 
 # Capture the completion time

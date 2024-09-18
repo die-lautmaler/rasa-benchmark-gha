@@ -27,14 +27,38 @@ inputs:
 outputs:
   time:
     description: 'The time the benchmark completed'
+    value: ${{ steps.auth.outputs.time }}
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-  env:
-    MODEL_PATH: ${{ inputs.model_path }}
-    DUCKLING_URL: ${{ inputs.duckling_url }}
-    TEST_DATA_PATH: ${{ inputs.test_data_path }}
-    OUTPUT_PATH: ${{ inputs.output_path }}
-    RASA_PORT: ${{ inputs.rasa_port }}
-    GAR_TOKEN: ${{ inputs.gar_token }}
-    GOOGLE_CREDENTIALS_JSON: ${{ inputs.gke_sa_key }}
+  using: 'composite'
+  steps:
+    - name: Authenticate with Google Cloud
+      id: 'auth'
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ inputs.gke_sa_key }}
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      # ------------------------------------------------------------------------------------------------ #
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install rasa==3.6.20 spacy==3.7.0
+        pip install git+https://github.com/die-lautmaler/rasa_components.git
+        pip install de-pipeline-lautmaler --extra-index-url=https://oauth2accesstoken:${{ inputs.gar_token }}@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
+        chmod +x entrypoint.sh
+    - name: Start bash script with variables
+      shell: bash
+      run: entrypoint.sh
+      env:
+        MODEL_PATH: ${{ inputs.model_path }}
+        DUCKLING_URL: ${{ inputs.duckling_url }}
+        TEST_DATA_PATH: ${{ inputs.test_data_path }}
+        OUTPUT_PATH: ${{ inputs.output_path }}
+        RASA_PORT: ${{ inputs.rasa_port }}
+        GAR_TOKEN: ${{ inputs.gar_token }}
+        GOOGLE_CREDENTIALS_JSON: ${{ inputs.gke_sa_key }}
