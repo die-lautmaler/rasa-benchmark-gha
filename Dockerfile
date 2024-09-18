@@ -3,7 +3,10 @@ FROM python:3.9-slim
 
 # Set environment variables
 ARG GOOGLE_CREDENTIALS_JSON
-RUN echo "$GOOGLE_CREDENTIALS_JSON" > /root/credentials.json
+# Print out the credentials file for debugging
+RUN echo "$GOOGLE_CREDENTIALS_JSON" > /root/credentials.json && \
+    cat /root/credentials.json
+
 
 # Install necessary packages and Google Cloud SDK
 RUN apt-get update && \
