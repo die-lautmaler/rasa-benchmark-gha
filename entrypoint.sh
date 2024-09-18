@@ -16,7 +16,6 @@ sleep 500
 # Run the benchmark script
 echo "Running benchmark script"
 export PYTHONPATH=/action
-touch __init__.py
 python -m benchmark.bin check
 
 # Capture the completion time
