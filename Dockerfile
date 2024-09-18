@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -24,7 +24,8 @@ RUN pip install oauth2client
 RUN pip install matplotlib
 RUN pip install seaborn
 RUN pip install numpy
-RUN pip install rasa
+RUN python -m pip install rasa==3.6.20
+RUN python -m pip install spacy==3.7.0
 
 
 # Define build-time arguments
@@ -39,7 +40,9 @@ COPY . /app
 # Expose the port on which Rasa will run
 EXPOSE 5005
 
-# Run the Rasa server as a background process and then run the Python script
-CMD rasa run --enable-api --model ${model_path} --endpoints endpoints.yml --cors "*" & \
-    sleep 300 && \
-    python -m benchmark.bin check
+# Create a startup script
+COPY startup.sh /app/startup.sh
+RUN chmod +x /app/startup.sh
+
+# Run startup script when the container launches
+CMD ["/app/startup.sh"]
