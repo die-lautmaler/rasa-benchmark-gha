@@ -2,8 +2,11 @@
 
 set -e
 
+model=$(ls -t "$MODEL_PATH" | head -n 1)  # Use double quotes for variable expansion
+model="$MODEL_PATH/$model"  # Consistent variable naming, change recent_file to model
+
 # Start Rasa server in the background
-rasa run --enable-api --model "$MODEL_PATH" --port "$RASA_PORT" &
+rasa run --enable-api --model "$model" --port "$RASA_PORT" &
 
 # Wait for Rasa server to start (adjust sleep time if needed)
 sleep 300
