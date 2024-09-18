@@ -1,48 +1,30 @@
-# Use an official Python runtime as a parent image
 FROM python:3.10-slim
-
-# Set the working directory inside the container
-WORKDIR /app
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git \
+    build-essential \
     curl \
-    && apt-get clean
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Rasa and any Python dependencies
-RUN pip install python-dotenv
-RUN pip install pyyaml
-RUN pip install pandas
-RUN pip install typer
-RUN pip install google-cloud-dialogflow
-RUN pip install google-api-python-client
-RUN pip install gspread
-RUN pip install gspread-dataframe
-RUN pip install gspread-formatting
-RUN pip install oauth2client
-RUN pip install matplotlib
-RUN pip install seaborn
-RUN pip install numpy
+# Install Rasa and other Python dependencies
 RUN python -m pip install rasa==3.6.20
-RUN python -m pip install spacy==3.7.0
 
+# Copy the benchmark directory from the action repository
+COPY benchmark /action/benchmark
 
-# Define build-time arguments
-ARG model_path=models/
-ARG duckling_url=http://localhost:8000
-ARG test_data_path=../../data/nlu.yml
-ARG output_path=../../report/
+# Set the working directory
+WORKDIR /github/workspace
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+# Install any needed packages specified in requirements.txt
+COPY requirements.txt /action/requirements.txt
+RUN pip install --no-cache-dir -r /action/requirements.txt
 
-# Expose the port on which Rasa will run
+# Create an entrypoint script
+COPY entrypoint.sh /action/entrypoint.sh
+RUN chmod +x /action/entrypoint.sh
+
+# Expose the Rasa server port
 EXPOSE 5005
 
-# Create a startup script
-COPY startup.sh /app/startup.sh
-RUN chmod +x /app/startup.sh
-
-# Run startup script when the container launches
-CMD ["/app/startup.sh"]
+# Set the entrypoint
+ENTRYPOINT ["/action/entrypoint.sh"]

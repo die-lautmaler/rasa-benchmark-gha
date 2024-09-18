@@ -1,6 +1,5 @@
-# action.yml
 name: 'Rasa NLU Benchmark'
-description: 'Runs a benchmark script on a given Rasa NLU model'
+description: 'Runs a Rasa server and benchmarks a given Rasa NLU model'
 inputs:
   model_path:
     description: 'Path to the Rasa NLU model'
@@ -14,15 +13,19 @@ inputs:
   output_path:
     description: 'Path to the output file'
     required: true
+  rasa_port:
+    description: 'Port for the Rasa server'
+    required: false
+    default: '5005'
 outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  time:
+    description: 'The time the benchmark completed'
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  args:
-    - ${{ inputs.model_path }}
-    - ${{ inputs.duckling_url }}
-    - ${{ inputs.test_data_path }}
-    - ${{ inputs.output_path }}
-
+  env:
+    MODEL_PATH: ${{ inputs.model_path }}
+    DUCKLING_URL: ${{ inputs.duckling_url }}
+    TEST_DATA_PATH: ${{ inputs.test_data_path }}
+    OUTPUT_PATH: ${{ inputs.output_path }}
+    RASA_PORT: ${{ inputs.rasa_port }}
