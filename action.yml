@@ -24,6 +24,10 @@ inputs:
     description: 'Service account key for GKE'
     required: false
     default: ''
+  threshold:
+    description: 'Threshold for the benchmark'
+    required: false
+    default: '0.9'
 outputs:
   time:
     description: 'The time the benchmark completed'
@@ -49,7 +53,8 @@ runs:
         python -m pip install --upgrade pip
         pip install rasa==3.6.20 spacy==3.7.0
         pip install git+https://github.com/die-lautmaler/rasa_components.git
-        pip install de-pipeline-lautmaler --extra-index-url=https://oauth2accesstoken:${{ inputs.gar_token }}@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
+        pip install --upgrade setuptools
+        pip install de-pipeline-lautmaler=1.1.1 --extra-index-url=https://oauth2accesstoken:${{ inputs.gar_token }}@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
         chmod +x entrypoint.sh
     - name: Start bash script with variables
       shell: bash
@@ -62,3 +67,4 @@ runs:
         RASA_PORT: ${{ inputs.rasa_port }}
         GAR_TOKEN: ${{ inputs.gar_token }}
         GOOGLE_CREDENTIALS_JSON: ${{ inputs.gke_sa_key }}
+        THRESHOLD: ${{ inputs.threshold }}
