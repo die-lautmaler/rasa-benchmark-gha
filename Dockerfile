@@ -26,6 +26,7 @@ RUN pip install seaborn
 RUN pip install numpy
 RUN pip install rasa
 
+
 # Define build-time arguments
 ARG model_path=models/
 ARG duckling_url=http://localhost:8000
