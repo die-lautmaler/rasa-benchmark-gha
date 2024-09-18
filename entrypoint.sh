@@ -6,10 +6,11 @@ set -e
 rasa run --enable-api --model "$MODEL_PATH" --port "$RASA_PORT" &
 
 # Wait for Rasa server to start (adjust sleep time if needed)
-sleep 10
+sleep 300
 
+cd action
 # Run the benchmark script
-python -m action.benchmark.bin check
+python -m benchmark.bin check
 
 # Capture the completion time
 COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
