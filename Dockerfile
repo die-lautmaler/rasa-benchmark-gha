@@ -1,34 +1,19 @@
+# Base image
 FROM python:3.9-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y git
-
-# Install Google Cloud SDK
-RUN curl -sSL https://sdk.cloud.google.com | bash
-RUN /root/google-cloud-sdk/install.sh
-
-# Add Google Cloud SDK to PATH
-ENV PATH="/root/google-cloud-sdk/bin:${PATH}"
-
-# Install additional Google Cloud components if needed
-RUN gcloud components install beta
-
-# Dockerfile
+# Set environment variables
 ARG GOOGLE_CREDENTIALS_JSON
 RUN echo "$GOOGLE_CREDENTIALS_JSON" > /root/credentials.json
-RUN cat /root/credentials.json
 
-# Install gcloud
+# Install necessary packages and Google Cloud SDK
 RUN apt-get update && \
     apt-get install -y curl && \
+    rm -rf /root/google-cloud-sdk && \
     curl https://sdk.cloud.google.com | bash && \
-    /root/google-cloud-sdk/bin/gcloud components install beta && \
-    /root/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=/root/credentials.json
+    /root/google-cloud-sdk/bin/gcloud components install beta
+
+# Authenticate with Google Cloud
+RUN /root/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file=/root/credentials.json
 
 
 # Install Rasa and other Python dependencies
