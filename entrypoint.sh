@@ -2,18 +2,21 @@
 
 set -e
 
-model=$(ls -t "$MODEL_PATH" | head -n 1)  # Use double quotes for variable expansion
-model="$MODEL_PATH/$model"  # Consistent variable naming, change recent_file to model
+echo "Current working directory: $(pwd)"
+echo "Contents of current directory:"
+ls -la
 
 # Start Rasa server in the background
-rasa run --enable-api --model "$model" --port "$RASA_PORT" &
+echo "Starting Rasa server with model path: $MODEL_PATH"
+rasa run --enable-api --model "$MODEL_PATH" --port "$RASA_PORT" &
 
 # Wait for Rasa server to start (adjust sleep time if needed)
-sleep 300
+sleep 500
 
-cd action
 # Run the benchmark script
-python -m benchmark.bin check
+echo "Running benchmark script"
+touch action/__init__.py
+python -m action.benchmark.bin check
 
 # Capture the completion time
 COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
