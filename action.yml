@@ -20,6 +20,10 @@ inputs:
     description: 'Port for the Rasa server'
     required: false
     default: '5005'
+  gke_sa_key:
+    description: 'Service account key for GKE'
+    required: false
+    default: ''
 outputs:
   time:
     description: 'The time the benchmark completed'
@@ -33,3 +37,4 @@ runs:
     OUTPUT_PATH: ${{ inputs.output_path }}
     RASA_PORT: ${{ inputs.rasa_port }}
     GAR_TOKEN: ${{ inputs.gar_token }}
+    GOOGLE_CREDENTIALS_JSON: ${{ inputs.gke_sa_key }}
