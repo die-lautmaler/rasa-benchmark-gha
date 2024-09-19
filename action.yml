@@ -59,6 +59,11 @@ runs:
         pip uninstall packaging -y
         pip install packaging==22.0
         pip install de-pipeline-lautmaler==1.1.1 --extra-index-url=https://oauth2accesstoken:${{ inputs.gar_token }}@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
+    - name: Set GitHub Path
+      run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
+      shell: bash
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
     - name: Start bash script with variables
       shell: bash
       run: ./entrypoint.sh
