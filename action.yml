@@ -56,6 +56,8 @@ runs:
         pip install spacy==3.7.0
         pip install packaging==22.0
         pip install git+https://github.com/die-lautmaler/rasa_components.git
+        pip uninstall packaging
+        pip install packaging==22.0
         pip install de-pipeline-lautmaler==1.1.1 --extra-index-url=https://oauth2accesstoken:${{ inputs.gar_token }}@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
         chmod +x entrypoint.sh
     - name: Start bash script with variables
