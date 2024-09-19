@@ -66,13 +66,11 @@ runs:
         GITHUB_ACTION_PATH: ${{ github.action_path }}
     - name: Start bash script with variables
       shell: bash
-      run: entrypoint.sh
-      env:
-        MODEL_PATH: ${{ inputs.model_path }}
-        DUCKLING_URL: ${{ inputs.duckling_url }}
-        TEST_DATA_PATH: ${{ inputs.test_data_path }}
-        OUTPUT_PATH: ${{ inputs.output_path }}
-        RASA_PORT: ${{ inputs.rasa_port }}
-        GAR_TOKEN: ${{ inputs.gar_token }}
-        GOOGLE_CREDENTIALS_JSON: ${{ inputs.gke_sa_key }}
-        THRESHOLD: ${{ inputs.threshold }}
+      run: |
+        rasa run --enable-api --model "${{ inputs.model_path }}" --port "${{ inputs.rasa_port }}" &
+        sleep 500
+        python -m pip install -r requirements.txt
+        python -m benchmark.bin check --threshold $THRESHOLD --nlu-data-dir $TEST_DATA_PATH
+        COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        echo "time=$COMPLETION_TIME" >> $GITHUB_OUTPUT
+        pkill -f "rasa run"
