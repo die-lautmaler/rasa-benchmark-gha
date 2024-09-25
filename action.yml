@@ -67,7 +67,11 @@ runs:
         pip install packaging==21.0
         rasa run --enable-api --model "${{ inputs.model_path }}" --port "${{ inputs.rasa_port }}" &
         sleep 500
-    - uses: actions/checkout@v4
+    - name: Checkout action repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.action_path }} # Ensures it checks out the action repo
+        path: action-repo # You can name it as a different path
     - name: Set GitHub Path
       run: echo "$GITHUB_ACTION_PATH" >> $GITHUB_PATH
       shell: bash
