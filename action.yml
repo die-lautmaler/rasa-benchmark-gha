@@ -19,7 +19,7 @@ inputs:
   rasa_port:
     description: 'Port for the Rasa server'
     required: false
-    default: '5005'
+    default: '8005'
   gke_sa_key:
     description: 'Service account key for GKE'
     required: false
@@ -74,7 +74,6 @@ runs:
     - name: Run benchmark
       shell: bash
       run: |
-        ls -R
         python -m pip install -r ${{ github.action_path }}/requirements.txt
         python ${{ github.action_path }}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data-dir "${{ github.workspace }}/target-repo/${{ inputs.test_data_path }}"
         COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
