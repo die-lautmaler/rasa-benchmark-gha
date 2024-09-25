@@ -54,14 +54,9 @@ def full_run(
 
 @benchmarker.command()
 def run(
-    testset_names: Optional[List[str]] = typer.Argument(
-        None,
-        help="one or several testset names to create test report. Only the newest testrun will be loaded",
-    ),
+    testset_names: Optional[List[str]] = None,
     ftype: Optional[str] = "csv",
-    data_root: Optional[str] = typer.Option(
-        None, help="path to folder holding the test set data"
-    ),
+    data_root: Optional[str] = None,
     run_id: Optional[str] = "nlu_update",
     testtype: Optional[str] = "nlu_r",
 ):
@@ -121,27 +116,10 @@ def run(
 
 
 def check(
-    testset_names: Optional[List[str]] = typer.Argument(
-        None,
-        help="one or several testset names to create test report. Only the newest testrun will be loaded",
-    ),
-    run_id: Optional[str] = typer.Option(
-        default="nlu_update",
-        help="if run_id was used in benchmark execution, load results for run_id (only newest as well)",
-    ),
-    data_root: Optional[str] = typer.Option(
-        None, help="path to folder holding the test set data"
-    ),
-    ftype: Optional[str] = typer.Option(
-        default="csv", help="file type csv|json (atm only csv is implemented)"
-    ),
+    run_id: Optional[str] = "nlu_update",
+    ftype: Optional[str] = "csv",
     testtype: Optional[str] = "nlu_r",
-    zip_path: Optional[str] = typer.Option(
-        None, help="if zipping is wanted, you must pass the path to report-folder"
-    ),
-    nlu_data_dir: Optional[str] = typer.Option(
-        default="../../data/", help="path to folder holding the test set data"
-    ),
+    nlu_data_dir: Optional[str] = "nlu.csv",
     threshold: Optional[str] = typer.Option(
         default=SCORE_THRESHOLD, help="threshold for score"
     ),
@@ -150,7 +128,7 @@ def check(
     check if trained model reaches score > threshold
     """
     typer.echo(f"check if trained model reaches score > {threshold}")
-    n_tests, score = run(testset_names, ftype, nlu_data_dir, run_id, testtype)
+    n_tests, score = run(data_root=nlu_data_dir, run_id=run_id, ftype=ftype, testtype=testtype)
     
     if score < float(threshold):
         typer.secho(f"score {score} is below threshold", fg=typer.colors.RED)
