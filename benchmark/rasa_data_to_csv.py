@@ -1,11 +1,8 @@
 import yaml
 import pandas as pd
-import typer
 import os
 
-app = typer.Typer()
 
-@app.command()
 def rasa_data_to_csv(input_file_path: str, output_file_path: str):
     with open(input_file_path, 'r') as stream:
         try:
@@ -29,6 +26,3 @@ def rasa_data_to_csv(input_file_path: str, output_file_path: str):
         pd.DataFrame(nlu).to_csv(output_file_path, index=False, header=False)
     else:
         return pd.DataFrame(nlu)
-    
-if __name__ == "__main__":
-    app()
