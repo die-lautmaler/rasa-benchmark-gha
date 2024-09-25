@@ -142,7 +142,7 @@ def check(
     nlu_data_dir: Optional[str] = typer.Option(
         default="../../data/", help="path to folder holding the test set data"
     ),
-    threshold: Optional[float] = typer.Option(
+    threshold: Optional[str] = typer.Option(
         default=SCORE_THRESHOLD, help="threshold for score"
     ),
     ):
@@ -150,7 +150,7 @@ def check(
     typer.echo(f"check if trained model reaches score > {threshold}")
     n_tests, score = run(testset_names, ftype, nlu_data_dir, run_id, testtype)
     
-    if score < threshold:
+    if score < float(threshold):
         typer.secho(f"score {score} is below threshold", fg=typer.colors.RED)
         sys.exit(1)
     else:
