@@ -12,6 +12,6 @@ def main(threshold: str, nlu_data_dir: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run NLU benchmark")
     parser.add_argument("--threshold", type=str, help="Threshold for NLU benchmark")
-    parser.add_argument("--nlu_data_dir", type=str, help="NLU data directory")
+    parser.add_argument("--nlu-data-dir", type=str, help="NLU data directory")
     args = parser.parse_args()
     main(args.threshold, args.nlu_data_dir)
