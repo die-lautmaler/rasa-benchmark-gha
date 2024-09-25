@@ -119,7 +119,7 @@ def run(
     storage.save_results(all_results)
     return (n_tests, matchscore)
 
-@benchmarker.command()
+
 def check(
     testset_names: Optional[List[str]] = typer.Argument(
         None,
@@ -146,7 +146,9 @@ def check(
         default=SCORE_THRESHOLD, help="threshold for score"
     ),
     ):
-
+    """
+    check if trained model reaches score > threshold
+    """
     typer.echo(f"check if trained model reaches score > {threshold}")
     n_tests, score = run(testset_names, ftype, nlu_data_dir, run_id, testtype)
     

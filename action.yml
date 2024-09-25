@@ -76,7 +76,7 @@ runs:
       run: |
         ls -R
         python -m pip install -r ${{ github.action_path }}/requirements.txt
-        python -m benchmark.bin check --threshold "${{inputs.threshold}}" --nlu-data-dir "${{ github.workspace }}/target-repo/${{ inputs.test_data_path }}"
+        python ${{ github.action_path }}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data-dir "${{ github.workspace }}/target-repo/${{ inputs.test_data_path }}"
         COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         echo "time=$COMPLETION_TIME" >> $GITHUB_OUTPUT
         pkill -f "rasa run"
