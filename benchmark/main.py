@@ -14,9 +14,10 @@ def main(threshold: str, nlu_data_dir: str):
     else:
         filepath = nlu_data_dir
     
-    rasa_data_to_csv(filepath, "nlu.csv")
+    output_path = os.path.join(nlu_data_dir, "nlu.csv")
+    rasa_data_to_csv(filepath, output_path)
 
-    nlu_benchmark.check(threshold=threshold, nlu_data_dir="nlu.csv")
+    nlu_benchmark.check(threshold=threshold, nlu_data_dir=output_path)
 
 
 if __name__ == "__main__":
