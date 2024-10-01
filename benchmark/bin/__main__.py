@@ -117,9 +117,9 @@ def run(
 
 def check(
     run_id: Optional[str] = "nlu_update",
-    ftype: Optional[str] = "csv",
+    ftype: str = None,
     testtype: Optional[str] = "nlu_r",
-    nlu_data_dir: Optional[str] = "nlu.csv",
+    nlu_data_dir: str = None,
     threshold: Optional[str] = typer.Option(
         default=SCORE_THRESHOLD, help="threshold for score"
     ),
@@ -128,6 +128,10 @@ def check(
     check if trained model reaches score > threshold
     """
     typer.echo(f"check if trained model reaches score > {threshold}")
+
+    if not ftype:
+        ftype = nlu_data_dir.split(".")[-1]
+    
     n_tests, score = run(data_root=nlu_data_dir, run_id=run_id, ftype=ftype, testtype=testtype)
     
     if score < float(threshold):

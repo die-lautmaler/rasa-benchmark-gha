@@ -2,6 +2,8 @@ import csv
 import pandas
 import os
 import shutil
+
+import yaml
 import typer
 
 from datetime import datetime
@@ -35,7 +37,7 @@ class BenchmarkStorage:
             raise ValueError(
                 "data root {} does not exist or is not a directory".format(data_root)
             )
-        if ftype not in ["csv", "json", "yaml"]:
+        if ftype not in ["csv", "json", "yaml", "yml"]:
             raise ValueError("file type {} can not be processed".format(ftype))
 
         self.data_root = data_root
@@ -71,7 +73,17 @@ class BenchmarkStorage:
                         else:
                             unlabeled += 1
                 elif self.ftype == "yaml":
-                    raise TypeError("yaml files not supported yet")
+                    nlu_data = yaml.safe_load(tsetf)
+                    assert "nlu" in nlu_data, "no nlu key in yaml file"
+                    for nlu in nlu_data["nlu"]:
+                        if "intent" not in nlu:
+                            unlabeled += 1
+                            continue
+                        else:
+                            intent = nlu["intent"]
+                            for example in nlu['examples']:
+                                utterance = example.strip().lstrip("- ")
+                                tasks.append(Task(utterance, intent, self.language_code))
 
         typer.echo("{} tasks loaded".format(len(tasks)))
         typer.echo("{} tasks without intent annotation not loaded".format(unlabeled))

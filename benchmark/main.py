@@ -10,13 +10,10 @@ def main(threshold: str, nlu_data_dir: str):
     print("Running NLU benchmark")
 
     if os.path.isdir(nlu_data_dir):
-        filepath = os.path.join(nlu_data_dir, "test_data.yml")
+        filepath = os.path.join(nlu_data_dir, "test.yml")
     else:
         filepath = nlu_data_dir
         nlu_data_dir = os.path.dirname(filepath)
-    
-    output_path = os.path.join(nlu_data_dir, "test_data.csv")
-    rasa_data_to_csv(filepath, output_path)
 
     nlu_benchmark.check(threshold=threshold, nlu_data_dir=nlu_data_dir)
 
