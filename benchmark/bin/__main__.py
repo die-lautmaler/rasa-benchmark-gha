@@ -128,9 +128,6 @@ def check(
     check if trained model reaches score > threshold
     """
     typer.echo(f"check if trained model reaches score > {threshold}")
-
-    if not ftype:
-        ftype = nlu_data_dir.split(".")[-1]
     
     n_tests, score = run(data_root=nlu_data_dir, run_id=run_id, ftype=ftype, testtype=testtype)
     
@@ -163,7 +160,7 @@ def report(
     ),
 ):
     """
-    create a report on a set of test results\n
+    create a report on a set of test results
     - confusion matrix plot
     - confidence histogram plot
     - per intent report with performance measure precision, recall, f1
