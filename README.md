@@ -10,3 +10,20 @@ Given a trained rasa model and a test dataset, this job completes if the accurac
 `gar_token`: your GAR token  
 `gke_sa_key`: your GKE key  
 `threshold`: 0.95  
+
+### usage
+```
+- name: benchmark the rasa model
+        uses: die-lautmaler/rasa-benchmark-gha@v1
+        with:
+          model_path: './bots/logo-demo-nlu/models'  # Make sure this points to your model directory
+          duckling_url: ${{ secrets.DUCKLING_URL }}
+          test_data_path: 'bots/logo-demo-nlu/data/test.yml'  # Adjust this path as needed
+          output_path: './benchmark_results.json'
+          gar_token: ${{ env.GAR_TOKEN }}
+          gke_sa_key: '${{ secrets.GKE_CCA_SA_KEY }}'
+          threshold: 0.95
+```
+
+### todo
+- currently the output_path is not used and no report is exported. working on generating the report.
