@@ -1,6 +1,5 @@
 import os
 import typer
-import sys
 from dotenv import load_dotenv
 from typing import Optional, List
 from googleapiclient.errors import HttpError
