@@ -5,7 +5,7 @@ Given a trained rasa model and a test dataset, this job completes if the accurac
 ### inputs
 `model_path`: path that contains a trained rasa model .tar.gz file  
 `duckling_url`: url to an active duckling server  
-`test_data_path`: path to a test data set, csv or yaml  
+`test_data_path`: path to a test data file or folder. If a folder is given, the path needs to end in csv or yaml folder (quirk of benchmarking tool needs to be supported)  
 `output_path`: file in which to store the results of the benchmark  
 `gar_token`: your GAR token  
 `gke_sa_key`: your GKE key  
