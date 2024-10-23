@@ -112,7 +112,7 @@ def run(
             typer.secho(e.__str__(), err=True)
 
     storage.save_results(all_results)
-    return (n_tests, matchscore)
+    return all_results.get_match_rate()
 
 
 def check(
