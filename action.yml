@@ -70,7 +70,18 @@ runs:
         pip uninstall packaging -y
         pip install packaging==21.0
         rasa run --enable-api --model "${{ inputs.model_path }}" --port "${{ inputs.rasa_port }}" &
-        sleep 300
+    - name: try sending requests to version endpoint until we get a response
+      run: |
+        while true; do
+          response=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:${{ inputs.rasa_port }}/version)"
+          if [ "$response" -eq 200 ]; then
+              echo "Server is up and running!"
+              break
+          else
+              echo "Waiting for server... (status: $response)"
+          fi
+          sleep 5
+        done
     - name: Run benchmark
       shell: bash
       run: |
