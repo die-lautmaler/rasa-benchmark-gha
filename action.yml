@@ -71,6 +71,7 @@ runs:
         pip install packaging==21.0
         rasa run --enable-api --model "${{ inputs.model_path }}" --port "${{ inputs.rasa_port }}" &
     - name: try sending requests to version endpoint until we get a response
+      shell: bash
       run: |
         while true; do
           response=$(curl -s -o /dev/null -w "%{http_code}" "http://localhost:${{ inputs.rasa_port }}/version)"
