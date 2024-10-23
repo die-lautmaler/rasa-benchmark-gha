@@ -114,31 +114,6 @@ def run(
     storage.save_results(all_results)
     return all_results.get_match_rate()
 
-
-def check(
-    run_id: Optional[str] = "nlu_update",
-    ftype: str = None,
-    testtype: Optional[str] = "nlu_r",
-    nlu_data_dir: str = None,
-    threshold: Optional[str] = typer.Option(
-        default=SCORE_THRESHOLD, help="threshold for score"
-    ),
-    ):
-    """
-    check if trained model reaches score > threshold
-    """
-    typer.echo(f"check if trained model reaches score > {threshold}")
-    
-    n_tests, score = run(data_root=nlu_data_dir, run_id=run_id, ftype=ftype, testtype=testtype)
-    
-    if score < float(threshold):
-        typer.secho(f"score {score} is below threshold", fg=typer.colors.RED)
-        sys.exit(1)
-    else:
-        typer.secho(f"score {score} is above threshold", fg=typer.colors.GREEN)
-        sys.exit(0)
-
-
 @benchmarker.command()
 def report(
     testset_names: Optional[List[str]] = typer.Argument(
