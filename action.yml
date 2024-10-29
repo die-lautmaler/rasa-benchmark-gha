@@ -80,7 +80,7 @@ runs:
           else
             echo "Waiting for server... (status: $response)"
           fi
-          sleep 5
+          sleep 4
         done
       shell: bash
     - name: Run benchmark
