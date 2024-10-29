@@ -77,6 +77,8 @@ runs:
           if [ "$response" -eq 200 ]; then
             echo "Server is available."
             break
+          elif [ "$response" -eq 000 ]; then
+            echo "Failed to connect to server. Retrying..."
           else
             echo "Waiting for server... (status: $response)"
           fi
