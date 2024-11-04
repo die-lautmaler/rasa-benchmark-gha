@@ -59,7 +59,7 @@ runs:
       shell: bash
       run: |
         poetry run rasa run --enable-api --model "${{ inputs.model_path }}" --port "${{ inputs.rasa_port }}" &
-        sleep 240
+        sleep 330
     - name: Run benchmark
       shell: bash
       run: |
