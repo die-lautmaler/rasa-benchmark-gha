@@ -35,10 +35,10 @@ outputs:
 runs:
   using: 'composite'
   steps:
-#    - name: Checkout target repo
-#      uses: actions/checkout@v4
-#      with:
-#        path: target-repo
+    - name: Checkout target repo
+      uses: actions/checkout@v4
+      with:
+        path: target-repo
 #    - name: Authenticate with Google Cloud
 #      id: 'auth'
 #      uses: google-github-actions/auth@v2
