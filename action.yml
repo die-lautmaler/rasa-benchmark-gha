@@ -58,10 +58,10 @@ runs:
     - name: Start Rasa server and run benchmark
       shell: bash
       run: |
-        poetry run rasa run --enable-api --model "${{inputs.model_path}}" --port "${{inputs.rasa_port}}" &
+        poetry run rasa run --enable-api --model "${{inputs.model_path}}" --port "${{inputs.rasa_port}}" > rasa_server.log 2>&1 &
         SERVER_PID=$!
         echo "Waiting for Rasa server to start..."
-        for i in {1..40}; do
+        for i in {1..5}; do
           if curl http://localhost:8005/status > /dev/null; then
             echo "Rasa server is ready!"
             break
@@ -70,6 +70,8 @@ runs:
             sleep 10
           fi
         done
+        echo "Rasa server log:"
+        cat rasa_server.log
         echo "Running benchmark"
         python ${{github.action_path}}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data "${{github.workspace}}/target-repo/${{inputs.test_data_path}}"
         COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
