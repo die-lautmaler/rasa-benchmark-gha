@@ -1,12 +1,15 @@
 name: 'Rasa NLU Benchmark'
 description: 'Runs a Rasa server and benchmarks a given Rasa NLU model'
 inputs:
+  rasa_project_path:
+    description: 'Path to the Rasa project top level folder containing the poetry pyproject.toml file'
+    required: true
   model_path:
-    description: 'Path to the Rasa NLU model'
+    description: 'Path to the Rasa NLU model relative to rasa_project_path or absolute path'
     required: true
   duckling_url:
     description: 'URL of the Duckling server'
-    required: true
+    required: false
   test_data_path:
     description: 'Path to the test data'
     required: true
@@ -39,43 +42,32 @@ runs:
       uses: actions/checkout@v4
       with:
         path: target-repo
-    - name: Authenticate with Google Cloud
-      id: 'auth'
-      uses: google-github-actions/auth@v2
-      with:
-        credentials_json: ${{ inputs.gke_sa_key }}
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v2
-      # ------------------------------------------------------------------------------------------------ #
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.10.15
-    - name: Install dependencies
-      shell: bash
-      run: |
-        python -m pip install --upgrade pip
-        pip install setuptools==65.5.1
-        pip install wheel==0.44.0
-        pip install rasa==3.6.20
-        pip install spacy==3.7.0
-        pip install packaging==22.0
-        pip install git+https://github.com/die-lautmaler/rasa_components.git
-        pip uninstall packaging -y
-        pip install packaging==22.0
-        pip install de-pipeline-lautmaler==1.2.0 --extra-index-url=https://oauth2accesstoken:${{ inputs.gar_token }}@europe-west3-python.pkg.dev/lautmaler-cca/cca-py/simple/
     - name: Start Rasa server
+      working-directory: ${{inputs.rasa_project_path}}
       shell: bash
       run: |
-        pip uninstall packaging -y
-        pip install packaging==21.0
-        rasa run --enable-api --model "${{ inputs.model_path }}" --port "${{ inputs.rasa_port }}" &
-        sleep 300
-    - name: Run benchmark
+        poetry run rasa run --enable-api --model "${{inputs.model_path}}" --port "${{inputs.rasa_port}}" &
+
+    - name: Install benchmark tool dependencies
       shell: bash
       run: |
-        python -m pip install -r ${{ github.action_path }}/requirements.txt
-        python ${{ github.action_path }}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data "${{ github.workspace }}/target-repo/${{ inputs.test_data_path }}"
+        pip install -r ${{github.action_path}}/requirements.txt
+
+    - name: Wait for Rasa Server and run benchmark
+      shell: bash
+      run: |
+        echo "Waiting for Rasa server to start..."
+        for i in {1..30}; do
+          if curl -s http://localhost:8005/ > /dev/null; then
+            echo "Rasa server is ready!"
+            break
+          else
+            echo "Waiting 10 more secs for Rasa server to start..."
+            sleep 10
+          fi
+        done
+        echo "Running benchmark"
+        python ${{github.action_path}}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data "${{github.workspace}}/target-repo/${{inputs.test_data_path}}"
         COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         echo "time=$COMPLETION_TIME" >> $GITHUB_OUTPUT
         pkill -f "rasa run"
