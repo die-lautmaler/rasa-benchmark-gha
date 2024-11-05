@@ -42,18 +42,6 @@ runs:
       uses: actions/checkout@v4
       with:
         path: target-repo
-#    - name: Authenticate with Google Cloud
-#      id: 'auth'
-#      uses: google-github-actions/auth@v2
-#      with:
-#        credentials_json: ${{ inputs.gke_sa_key }}
-#    - name: Set up Cloud SDK
-#      uses: google-github-actions/setup-gcloud@v2
-#      # ------------------------------------------------------------------------------------------------ #
-#    - name: Set up Python
-#      uses: actions/setup-python@v4
-#      with:
-#        python-version: 3.10.15
     - name: Start Rasa server
       working-directory: ${{inputs.rasa_project_path}}
       shell: bash
@@ -64,13 +52,13 @@ runs:
       shell: bash
       run: |
         pip install -r ${{github.action_path}}/requirements.txt
-    
+
     - name: Wait for Rasa Server and run benchmark
       shell: bash
       run: |
         echo "Waiting for Rasa server to start..."
-        for i in {1..5}; do
-          if curl http://localhost:8005/ > /dev/null; then
+        for i in {1..30}; do
+          if curl -s http://localhost:8005/ > /dev/null; then
             echo "Rasa server is ready!"
             break
           else
