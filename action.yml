@@ -62,11 +62,11 @@ runs:
         SERVER_PID=$!
         echo "Waiting for Rasa server to start..."
         for i in {1..40}; do
-          if curl -s http://localhost:8005/model/parse > /dev/null; then
+          if curl http://localhost:8005/status > /dev/null; then
             echo "Rasa server is ready!"
             break
           else
-            echo "Waiting for Rasa server to start..."
+            echo "Waiting 10 more secs for Rasa server to start..."
             sleep 10
           fi
         done
