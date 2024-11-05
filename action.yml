@@ -54,7 +54,7 @@ runs:
     - name: Install benchmark tool dependencies
       shell: bash
       run: |
-        poetry run pip install -r ${{github.action_path}}/requirements.txt
+        pip install -r ${{github.action_path}}/requirements.txt
     - name: Start Rasa server
       shell: bash
       run: |
@@ -65,7 +65,7 @@ runs:
       shell: bash
       run: |
         echo "running benchmark"
-        poetry run python ${{github.action_path}}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data "${{github.workspace}}/target-repo/${{inputs.test_data_path}}"
+        python ${{github.action_path}}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data "${{github.workspace}}/target-repo/${{inputs.test_data_path}}"
         COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         echo "time=$COMPLETION_TIME" >> $GITHUB_OUTPUT
         pkill -f "rasa run"
