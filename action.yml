@@ -1,8 +1,11 @@
 name: 'Rasa NLU Benchmark'
 description: 'Runs a Rasa server and benchmarks a given Rasa NLU model'
 inputs:
+  rasa_project_path:
+    description: 'Path to the Rasa project top level folder containing the poetry pyproject.toml file'
+    required: true
   model_path:
-    description: 'Path to the Rasa NLU model'
+    description: 'Path to the Rasa NLU model relative to rasa_project_path or absolute path'
     required: true
   duckling_url:
     description: 'URL of the Duckling server'
@@ -56,6 +59,7 @@ runs:
       run: |
         pip install -r ${{github.action_path}}/requirements.txt
     - name: Start Rasa server and run benchmark
+      working-directory: ${{inputs.rasa_project_path}}
       shell: bash
       run: |
         poetry run rasa run --enable-api --model "${{inputs.model_path}}" --port "${{inputs.rasa_port}}"
