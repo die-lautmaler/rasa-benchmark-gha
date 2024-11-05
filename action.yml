@@ -58,7 +58,7 @@ runs:
     - name: Start Rasa server and run benchmark
       shell: bash
       run: |
-        poetry run rasa run --enable-api --model "${{inputs.model_path}}" --port "${{inputs.rasa_port}}" > rasa_server.log 2>&1 &
+        poetry run rasa run --enable-api --model "${{inputs.model_path}}" --port "${{inputs.rasa_port}}"
 
 #    - name: Start Rasa server and run benchmark
 #      shell: bash
