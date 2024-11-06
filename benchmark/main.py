@@ -1,4 +1,6 @@
 import argparse
+import time
+import requests
 import sys
 import typer
 
@@ -6,7 +8,27 @@ from bin import __main__ as nlu_benchmark
 import os
 
 
+
+def wait_for_server():
+    """ Wait for the server to start up """
+    url = "http://localhost:8005/"
+    for _ in range(600):
+        try:
+            response = requests.get(url)
+            if response.status_code == 200:
+                return
+        except requests.exceptions.ConnectionError:
+            pass
+        time.sleep(1)
+    raise ConnectionError(f"Could not connect to server at {url}")
+
+
 def main(threshold: str, test_data_source: str):
+    """ Run NLU benchmark """
+    
+    # Wait for the server to start up
+    wait_for_server()
+
     typer.secho(f"Threshold: {threshold}")
     typer.secho(f"NLU data dir: {test_data_source}")
     typer.secho("Running NLU benchmark")

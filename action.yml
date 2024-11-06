@@ -56,16 +56,6 @@ runs:
     - name: Wait for Rasa Server and run benchmark
       shell: bash
       run: |
-        echo "Waiting for Rasa server to start..."
-        for i in {1..30}; do
-          if curl -s http://localhost:8005/ > /dev/null; then
-            echo "Rasa server is ready!"
-            break
-          else
-            echo "Waiting 10 more secs for Rasa server to start..."
-            sleep 10
-          fi
-        done
         echo "Running benchmark"
         python ${{github.action_path}}/benchmark/main.py --threshold "${{inputs.threshold}}" --nlu-data "${{github.workspace}}/target-repo/${{inputs.test_data_path}}"
         COMPLETION_TIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
